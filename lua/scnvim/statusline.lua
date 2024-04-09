@@ -1,5 +1,5 @@
 --- Status line.
----@module scnvim.statusline
+-- ---@module scnvim.statusline
 local M = {}
 
 local widgets = {
@@ -7,13 +7,13 @@ local widgets = {
 }
 
 --- Set the server status
----@param str The server status string.
+---@param str string The server status string.
 function M.set_server_status(str)
   widgets.statusline = str
 end
 
 --- Get the server status.
----@return A string containing the server status.
+---@return string # A string containing the server status.
 function M.get_server_status()
   return widgets.statusline or ''
 end

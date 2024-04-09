@@ -1,25 +1,25 @@
 --- Default configuration.
 --- Provides fallback values not specified in the user config.
----@module scnvim.config
+-- ---@module scnvim.config
 
 --- table
----@table default
----@field ensure_installed (default: true) If installed once, this can be set to false to improve startup time.
+---@class default
+---@field ensure_installed boolean (default: true) If installed once, this can be set to false to improve startup time.
 local default = {
   ensure_installed = true,
 
   --- table
-  ---@table default.sclang
-  ---@field cmd Path to the sclang executable. Not needed if sclang is already in your $PATH.
-  ---@field args Comma separated arguments passed to the sclang executable.
+  ---@class default.sclang
+  ---@field cmd string|nil Path to the sclang executable. Not needed if sclang is already in your $PATH.
+  ---@field args table Comma separated arguments passed to the sclang executable.
   sclang = {
     cmd = nil,
     args = {},
   },
 
   --- table (empty by default)
-  ---@table default.keymaps
-  ---@field keymap scnvim.map
+  ---@class default.keymaps
+  ---@field keymap table scnvim.map
   ---@usage keymaps = {
   ---    ['<M-e>'] = map('editor.send_line', {'i', 'n'}),
   ---    ['<C-e>'] = {
@@ -32,18 +32,18 @@ local default = {
   keymaps = {},
 
   --- table
-  ---@table default.documentation
-  ---@field cmd Absolute path to the render program (e.g. /opt/homebrew/bin/pandoc)
-  ---@field args (default: `{ '$1', '--from', 'html', '--to', 'plain', '-o', '$2' }`)
+  ---@class default.documentation
+  ---@field cmd string|nil Absolute path to the render program (e.g. /opt/homebrew/bin/pandoc)
+  ---@field args table (default: `{ '$1', '--from', 'html', '--to', 'plain', '-o', '$2' }`)
   ---
   --- Arguments given to the render program. The default args are for
   ---`pandoc`. Any program that can convert html into plain text should work. The
   --- string $1 will be replaced with the input file path and $2 will be replaced
   --- with the output file path.
   ---
-  ---@field horizontal (default: true) Open the help window as a horizontal split
-  ---@field direction (default: 'top') Direction of the split: 'top', 'right', 'bot', 'left'
-  ---@field keymaps (default: true) If true apply user keymaps to the help
+  ---@field horizontal boolean (default: true) Open the help window as a horizontal split
+  ---@field direction 'top'|'right'|'bot'|'left' (default: 'top') Direction of the split: 'top', 'right', 'bot', 'left'
+  ---@field keymaps boolean (default: true) If true apply user keymaps to the help
   --- window. Use a table value for explicit mappings.
   documentation = {
     cmd = nil,
@@ -54,15 +54,15 @@ local default = {
   },
 
   --- table
-  ---@table default.postwin
-  ---@field highlight (default: true) Use syntax colored post window output.
-  ---@field auto_toggle_error (default: true) Auto-toggle post window on errors.
-  ---@field scrollback (default: 5000) The number of lines to save in the post window history.
-  ---@field horizontal (default: false) Open the post window as a horizontal split
-  ---@field direction (default: 'right') Direction of the split: 'top', 'right', 'bot', 'left'
-  ---@field size Use a custom initial size
-  ---@field fixed_size Use a fixed size for the post window. The window will always use this size if closed.
-  ---@field keymaps (default: true) If true apply user keymaps to the help
+  ---@class default.postwin
+  ---@field highlight boolean (default: true) Use syntax colored post window output.
+  ---@field auto_toggle_error boolean (default: true) Auto-toggle post window on errors.
+  ---@field scrollback number (default: 5000) The number of lines to save in the post window history.
+  ---@field horizontal boolean (default: false) Open the post window as a horizontal split
+  ---@field direction 'top'|'right'|'bot'|'left' (default: 'right') Direction of the split: 'top', 'right', 'bot', 'left'
+  ---@field size table|nil Use a custom initial size
+  ---@field fixed_size table|nil Use a fixed size for the post window. The window will always use this size if closed.
+  ---@field keymaps boolean|table|nil (default: true) If true apply user keymaps to the help
   --- window. Use a table value for explicit mappings.
   postwin = {
     highlight = true,
@@ -75,13 +75,13 @@ local default = {
     keymaps = nil,
 
     --- table
-    ---@table default.postwin.float
-    ---@field enabled (default: false) Use a floating post window.
-    ---@field row (default: 0) The row position, can be a function.
-    ---@field col (default: vim.o.columns) The column position, can be a function.
-    ---@field width (default: 64) The width, can be a function.
-    ---@field height (default: 14) The height, can be a function.
-    ---@field callback (default: `function(id) vim.api.nvim_win_set_option(id, 'winblend', 10) end`)
+    ---@class default.postwin.float
+    ---@field enabled boolean (default: false) Use a floating post window.
+    ---@field row number|function (default: 0) The row position, can be a function.
+    ---@field col number|function (default: vim.o.columns) The column position, can be a function.
+    ---@field width number|function (default: 64) The width, can be a function.
+    ---@field height number|function (default: 14) The height, can be a function.
+    ---@field callback function (default: `function(id) vim.api.nvim_win_set_option(id, 'winblend', 10) end`)
     --- Callback that runs whenever the floating window was opened.
     --- Can be used to set window local options.
     float = {
@@ -93,9 +93,9 @@ local default = {
       width = 64,
       height = 14,
       --- table
-      ---@table default.postwin.float.config
-      ---@field border (default: 'single')
-      ---@field ... See `:help nvim_open_win` for possible values
+      ---@class default.postwin.float.config
+      ---@field border 'none'|'single'|'double'|'rounded'|'solid'|'shadow'|string[] (default: 'single')
+      --- ... See `:help nvim_open_win` for possible values
       config = {
         border = 'single',
       },
@@ -106,27 +106,27 @@ local default = {
   },
 
   --- table
-  ---@table default.editor
-  ---@field force_ft_supercollider (default: true) Treat .sc files as supercollider.
+  ---@class default.editor
+  ---@field force_ft_supercollider boolean (default: true) Treat .sc files as supercollider.
   --- If false, use nvim's native ftdetect.
   editor = {
     force_ft_supercollider = true,
 
     --- table
-    ---@table editor.highlight
-    ---@field color (default: `TermCursor`) Highlight group for the flash color.
+    ---@class editor.highlight
+    ---@field color string|table (default: `TermCursor`) Highlight group for the flash color.
     --- Use a table for custom colors:
     --- `color = { guifg = 'black', guibg = 'white', ctermfg = 'black', ctermbg = 'white' }`
-    ---@field type (default: 'flash') Highligt flash type: 'flash', 'fade' or 'none'
+    ---@field type 'flash'|'fade'|'none' (default: 'flash') Highligt flash type: 'flash', 'fade' or 'none'
 
     --- table
-    ---@table editor.highlight.flash
-    ---@field duration (default: 100) The duration of the flash in ms.
-    ---@field repeats (default: 2) The number of repeats.
+    ---@class editor.highlight.flash
+    ---@field duration number (default: 100) The duration of the flash in ms.
+    ---@field repeats number (default: 2) The number of repeats.
 
     --- table
-    ---@table editor.highlight.fade
-    ---@field duration (default: 375) The duration of the flash in ms.
+    ---@class editor.highlight.fade
+    ---@field duration number (default: 375) The duration of the flash in ms.
     highlight = {
       color = 'TermCursor',
       type = 'flash',
@@ -140,10 +140,10 @@ local default = {
     },
 
     --- table
-    ---@table editor.signature
-    ---@field float (default: true) Show function signatures in a floating window
-    ---@field auto (default: true) Show function signatures while typing in insert mode
-    ---@field config
+    ---@class editor.signature
+    ---@field float boolean (default: true) Show function signatures in a floating window
+    ---@field auto boolean (default: true) Show function signatures while typing in insert mode
+    ---@field config table
     signature = {
       float = true,
       auto = true,
@@ -151,14 +151,12 @@ local default = {
     },
   },
 
-  --- table
-  ---@table snippet
 
-  --- table
-  ---@table snippet.engine
-  ---@field name Name of the snippet engine
-  ---@field options Table of engine specific options (note, currently not in use)
+  ---@class snippet
   snippet = {
+  ---@class snippet.engine
+  ---@field name string Name of the snippet engine
+  ---@field options table Table of engine specific options (note, currently not in use)
     engine = {
       name = 'luasnip',
       options = {
@@ -170,8 +168,8 @@ local default = {
   },
 
   --- table
-  ---@table statusline
-  ---@field poll_interval (default: 1) The interval to update the status line widgets in seconds.
+  ---@class statusline
+  ---@field poll_interval number (default: 1) The interval to update the status line widgets in seconds.
   statusline = {
     poll_interval = 1,
   },
@@ -194,7 +192,7 @@ setmetatable(M, {
 })
 
 --- Merge the user configuration with the default values.
----@param config The user configuration
+---@param config table The user configuration
 function M.resolve(config)
   config = config or {}
   M.config = vim.tbl_deep_extend('keep', config, default)

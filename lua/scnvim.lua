@@ -1,5 +1,5 @@
 --- Main module.
----@module scnvim
+-- ---@module scnvim
 ---@author David Granström
 ---@license GPLv3
 
@@ -48,7 +48,7 @@ scnvim.map_expr = map.map_expr
 --- Setup function.
 ---
 --- This function is called from the user's config to initialize scnvim.
----@param user_config A user config or an empty table.
+---@param user_config table A user config or an empty table.
 function scnvim.setup(user_config)
   user_config = user_config or {}
   config.resolve(user_config)
@@ -63,20 +63,20 @@ function scnvim.setup(user_config)
 end
 
 --- Evaluate an expression.
----@param expr Any valid SuperCollider expression.
+---@param expr string Any valid SuperCollider expression.
 function scnvim.send(expr)
   sclang.send(expr, false)
 end
 
 --- Evaluate an expression without feedback from the post window.
----@param expr Any valid SuperCollider expression.
+---@param expr string Any valid SuperCollider expression.
 function scnvim.send_silent(expr)
   sclang.send(expr, true)
 end
 
 --- Evaluate an expression and get the return value in lua.
----@param expr Any valid SuperCollider expression.
----@param cb A callback that will receive the return value as its first argument.
+---@param expr string Any valid SuperCollider expression.
+---@param cb function A callback that will receive the return value as its first argument.
 ---@usage scnvim.eval('1 + 1', function(res)
 ---  print(res)
 --- end)
@@ -100,22 +100,22 @@ function scnvim.recompile()
 end
 
 --- Determine if a sclang process is active.
----@return True if sclang is running otherwise false.
+---@return boolean True if sclang is running otherwise false.
 function scnvim.is_running()
   return sclang.is_running()
 end
 
 --- Register an extension.
----@param ext The extension to register.
----@return The extension.
+---@param ext string The extension to register.
+---@return string # The extension.
 function scnvim.register_extension(ext)
   return extensions.register(ext)
 end
 
 --- Load an extension.
 --- Should only be called after `scnvim.setup`.
----@param name The extension to load.
----@return The exported functions from the extension.
+---@param name string The extension to load.
+---@return table The exported functions from the extension.
 ---@usage scnvim.load_extension('logger')
 function scnvim.load_extension(name)
   return extensions.load(name)

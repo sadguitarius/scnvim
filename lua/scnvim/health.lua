@@ -1,5 +1,5 @@
 --- Perform health checks.
----@module scnvim.health
+-- ---@module scnvim.health
 ---@usage :checkhealth scnvim
 ---@local
 

@@ -1,7 +1,7 @@
 --- Commands
 ---
 --- Returns a single function that creates user commands.
----@module scnvim.commands
+-- ---@module scnvim.commands
 ---@local
 
 local sclang = require 'scnvim.sclang'

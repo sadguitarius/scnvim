@@ -1,5 +1,5 @@
 --- Sclang wrapper.
----@module scnvim.sclang
+-- ---@module scnvim.sclang
 
 local postwin = require 'scnvim.postwin'
 local udp = require 'scnvim.udp'
@@ -56,15 +56,15 @@ end)
 
 --- Action that runs on sclang exit
 --- The default is to destory the post window.
----@param code The exit code
----@param signal Terminating signal
+---@param code string The exit code
+---@param signal string Terminating signal
 M.on_exit = action.new(function(code, signal) -- luacheck: no unused args
   postwin.destroy()
 end)
 
 --- Action that runs on sclang output.
 --- The default is to print a line to the post window.
----@param line A complete line of sclang output.
+---@param line string A complete line of sclang output.
 M.on_output = action.new(function(line)
   postwin.post(line)
 end)
@@ -154,7 +154,7 @@ function M.poll_server_status()
 end
 
 --- Generate assets. tags syntax etc.
----@param on_done Optional callback that runs when all assets have been created.
+---@param on_done function Optional callback that runs when all assets have been created.
 function M.generate_assets(on_done)
   assert(M.is_running(), '[scnvim] sclang not running')
   local format = config.snippet.engine.name
@@ -168,14 +168,14 @@ function M.hard_stop()
 end
 
 --- Check if the process is running.
----@return True if running otherwise false.
+---@return boolean # True if running otherwise false.
 function M.is_running()
   return M.proc and M.proc:is_active() or false
 end
 
 --- Send code to the interpreter.
----@param data The code to send.
----@param silent If true will not echo output to the post window.
+---@param data string The code to send.
+---@param silent boolean If true will not echo output to the post window.
 function M.send(data, silent)
   silent = silent or false
   if M.is_running() then
@@ -187,8 +187,8 @@ function M.send(data, silent)
 end
 
 --- Evaluate a SuperCollider expression and return the result to lua.
----@param expr The expression to evaluate.
----@param cb The callback with a single argument that contains the result.
+---@param expr string The expression to evaluate.
+---@param cb function The callback with a single argument that contains the result.
 function M.eval(expr, cb)
   vim.validate {
     expr = { expr, 'string' },

@@ -1,7 +1,7 @@
 --- Settings
 ---
 --- Returns a single function that applies default settings.
----@module scnvim.settings
+-- ---@module scnvim.settings
 ---@local
 
 local config = require 'scnvim.config'

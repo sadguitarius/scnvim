@@ -1,5 +1,5 @@
 --- Signature help.
----@module scnvim.signature
+-- ---@module scnvim.signature
 ---@local
 
 --- TODO: refactor to use vim.diagnostic?
@@ -23,10 +23,10 @@ local function is_outside_of_statment(line, line_to_cursor)
 end
 
 local function extract_objects_helper(str)
-  local objects = vim.split(str, '(', true)
+  local objects = vim.split(str, '(', { trimempty = true })
   -- split arguments
   objects = vim.tbl_map(function(s)
-    return vim.split(s, ',', true)
+    return vim.split(s, ',', { trimempty = true })
   end, objects)
   objects = vim.tbl_flatten(objects)
   objects = vim.tbl_map(function(s)

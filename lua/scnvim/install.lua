@@ -1,4 +1,4 @@
----@module scnvim.install
+-- ---@module scnvim.install
 ---@local
 
 local path = require 'scnvim.path'
@@ -26,7 +26,7 @@ function M.uninstall()
 end
 
 --- Check if classes are linked
----@return Absolute path to Extensions/scide_scnvim
+---@return string|nil # Absolute path to Extensions/scide_scnvim
 ---@local
 function M.check()
   local link_target = get_link_target()

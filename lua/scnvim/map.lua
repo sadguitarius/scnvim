@@ -1,6 +1,6 @@
 --- Helper object to define a keymap.
 --- Usually used exported from the scnvim module
----@module scnvim.map
+-- ---@module scnvim.map
 ---@see scnvim.editor
 ---@see scnvim
 ---@usage map('module.fn', { modes })
@@ -8,11 +8,11 @@
 ---@usage map(function() print 'hi' end)
 
 --- Valid modules.
----@table modules
----@field editor
----@field postwin
----@field sclang
----@field signature
+-- ---@table modules
+-- ---@field editor
+-- ---@field postwin
+-- ---@field sclang
+-- ---@field signature
 local modules = {
   'editor',
   'postwin',
@@ -66,7 +66,7 @@ local map_expr = function(expr, modes, options)
   modes = type(modes) == 'string' and { modes } or modes
   options = options or {}
   options.silent = options.silent == nil and true or options.silent
-  options.desc = options.desc or 'sclang: ' .. expr
+  options.desc = options.desc or ('sclang: ' .. expr)
   return map(function()
     require('scnvim.sclang').send(expr, options.silent)
   end, modes, options)

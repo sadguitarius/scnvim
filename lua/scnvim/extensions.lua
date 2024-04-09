@@ -2,7 +2,7 @@
 --- API used to manage and register third party scnvim extensions.
 --- Heavily inspired by the extension model used by telescope.nvim
 --- https://github.com/nvim-telescope/telescope.nvim
----@module scnvim.extensions
+-- ---@module scnvim.extensions
 ---@local
 local config = require 'scnvim.config'
 local path = require 'scnvim.path'
@@ -55,22 +55,22 @@ M.manager = setmetatable({}, {
 })
 
 --- Register an extension.
----@param ext The extension to register.
----@return The extension.
+---@param ext string The extension to register.
+---@return string # The extension.
 function M.register(ext)
   return ext
 end
 
 --- Load an extension.
----@param name The extension to load.
----@return The exported extension API.
+---@param name string The extension to load.
+---@return table # The exported extension API.
 function M.load(name)
   return M.manager[name]
 end
 
 --- Run an exported function.
 --- This function is called by `SCNvimExt` user command and probably not so useful on its own.
----@param tbl Table returned by `nvim_buf_create_user_command`
+---@param tbl table Table returned by `nvim_buf_create_user_command`
 function M.run_user_command(tbl)
   local name, cmd = unpack(vim.split(tbl.fargs[1], '.', { plain = true, trimempty = true }))
   local ext = M.manager[name]

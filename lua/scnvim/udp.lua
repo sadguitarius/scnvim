@@ -1,7 +1,7 @@
 --- UDP
 --- Receive data from sclang as UDP datagrams.
 --- The data should be in the form of JSON formatted strings.
----@module scnvim.udp
+-- ---@module scnvim.udp
 ---@local
 
 local uv = vim.loop
@@ -22,7 +22,7 @@ function Handlers.luaeval(codestring)
   if not codestring then
     return
   end
-  local func = loadstring(codestring)
+  local func = assert(loadstring(codestring), "could not parse lua code from sclang")
   local ok, result = pcall(func)
   if not ok then
     print('[scnvim] luaeval: ' .. result)

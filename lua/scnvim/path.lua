@@ -1,13 +1,13 @@
 --- Path and platform related functions.
 --- '/' is the path separator for all platforms.
----@module scnvim.path
+-- ---@module scnvim.path
 
 local M = {}
 local uv = vim.loop
 local config = require 'scnvim.config'
 
 --- Get the host system
----@return 'windows', 'macos' or 'linux'
+---@return 'windows'|'macos'|'linux'
 function M.get_system()
   local sysname = uv.os_uname().sysname
   if sysname:match 'Windows' then
@@ -23,7 +23,7 @@ end
 M.is_windows = (M.get_system() == 'windows')
 
 --- Get the scnvim cache directory.
----@return The absolute path to the cache directory
+---@return string # The absolute path to the cache directory
 function M.get_cache_dir()
   local cache_path = M.concat(vim.fn.stdpath 'cache', 'scnvim')
   cache_path = M.normalize(cache_path)
@@ -32,15 +32,15 @@ function M.get_cache_dir()
 end
 
 --- Check if a path exists
----@param path The path to test
----@return True if the path exists otherwise false
+---@param path string The path to test
+---@return boolean # True if the path exists otherwise false
 function M.exists(path)
   return uv.fs_stat(path) ~= nil
 end
 
 --- Check if a file is a symbolic link.
----@param path The path to test.
----@return True if the path is a symbolic link otherwise false
+---@param path string The path to test.
+---@return boolean # True if the path is a symbolic link otherwise false
 function M.is_symlink(path)
   local stat = uv.fs_lstat(path)
   if stat then
@@ -55,8 +55,8 @@ end
 --- * syntax
 --- * tags
 ---
----@param name The asset to get.
----@return Absolute path to the asset
+---@param name string The asset to get.
+---@return string # Absolute path to the asset
 ---@usage path.get_asset 'snippets'
 function M.get_asset(name)
   local cache_dir = M.get_cache_dir()
@@ -75,7 +75,7 @@ function M.get_asset(name)
 end
 
 --- Concatenate items using the path separator.
----@param ... items to concatenate into a path
+---@param ... string items to concatenate into a path
 ---@usage
 --- local cache_dir = path.get_cache_dir()
 --- local res = path.concat(cache_dir, 'subdir', 'file.txt')
@@ -86,15 +86,15 @@ function M.concat(...)
 end
 
 --- Normalize a path to use Unix style separators: '/'.
----@param path The path to normalize.
----@return The normalized path.
+---@param path string The path to normalize.
+---@return string # The normalized path.
 function M.normalize(path)
   return (path:gsub('\\', '/'))
 end
 
 --- Get the root dir of a plugin.
----@param plugin_name Optional plugin name, use nil to get scnvim root dir.
----@return Absolute path to the plugin root dir.
+---@param plugin_name? string Optional plugin name, use nil to get scnvim root dir.
+---@return string # Absolute path to the plugin root dir.
 function M.get_plugin_root_dir(plugin_name)
   plugin_name = plugin_name or 'scnvim'
   local paths = vim.api.nvim_list_runtime_paths()
@@ -108,7 +108,7 @@ function M.get_plugin_root_dir(plugin_name)
 end
 
 --- Get the SuperCollider user extension directory.
----@return Platform specific user extension directory.
+---@return string Platform specific user extension directory.
 function M.get_user_extension_dir()
   local sysname = M.get_system()
   local home_dir = uv.os_homedir()
@@ -116,19 +116,21 @@ function M.get_user_extension_dir()
   if xdg then
     return xdg .. '/SuperCollider/Extensions'
   end
-  if sysname == 'windows' then
-    return M.normalize(home_dir) .. '/AppData/Local/SuperCollider/Extensions'
-  elseif sysname == 'linux' then
-    return home_dir .. '/.local/share/SuperCollider/Extensions'
-  elseif sysname == 'macos' then
-    return home_dir .. '/Library/Application Support/SuperCollider/Extensions'
+  if home_dir then
+    if sysname == 'windows' then
+      return M.normalize(home_dir) .. '/AppData/Local/SuperCollider/Extensions'
+    elseif sysname == 'linux' then
+      return home_dir .. '/.local/share/SuperCollider/Extensions'
+    elseif sysname == 'macos' then
+      return home_dir .. '/Library/Application Support/SuperCollider/Extensions'
+    end
   end
   error '[scnvim] could not get SuperCollider Extensions dir'
 end
 
 --- Create a symbolic link.
----@param source Absolute path to the source.
----@param destination Absolute path to the destination.
+---@param source string Absolute path to the source.
+---@param destination string Absolute path to the destination.
 function M.link(source, destination)
   if not uv.fs_stat(destination) then
     uv.fs_symlink(source, destination, { dir = true, junction = true })
@@ -136,7 +138,7 @@ function M.link(source, destination)
 end
 
 --- Remove a symbolic link.
----@param link_path Absolute path for the file to unlink.
+---@param link_path string Absolute path for the file to unlink.
 function M.unlink(link_path)
   if M.is_symlink(link_path) then
     uv.fs_unlink(link_path)

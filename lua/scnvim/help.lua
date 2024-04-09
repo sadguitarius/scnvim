@@ -5,7 +5,7 @@
 --- Users and plugin authors can override `config.documentation.on_open` and
 ---`config.documentation.on_select` callbacks to display help files or method
 --- results.
----@module scnvim.help
+-- ---@module scnvim.help
 ---@see scnvim.config
 
 local sclang = require 'scnvim.sclang'
@@ -24,9 +24,9 @@ local M = {}
 
 --- Action that runs when a help file is opened.
 --- The default is to open a split buffer.
----@param err nil on success or reason of error
----@param uri Help file URI
----@param method (optional) move cursor to line matching regex pattern
+---@param err string|nil nil on success or reason of error
+---@param uri string Help file URI
+---@param method? string (optional) move cursor to line matching regex pattern
 M.on_open = action.new(function(err, uri, subject, method)
   if err then
     utils.print(err)
@@ -56,9 +56,9 @@ M.on_open = action.new(function(err, uri, subject, method)
 end)
 
 --- Get the render arguments with correct input and output file paths.
----@param input_path The input path to use.
----@param output_path The output path to use.
----@return A table with '$1' and '$2' replaced by @p input_path and @p output_path
+---@param input_path string The input path to use.
+---@param output_path string The output path to use.
+---@return table # A table with '$1' and '$2' replaced by @p input_path and @p output_path
 local function get_render_args(input_path, output_path)
   local args = vim.deepcopy(config.documentation.args)
   for index, str in ipairs(args) do
@@ -74,8 +74,8 @@ end
 
 --- Render a schelp file into vim help format.
 --- Uses config.documentation.cmd as the renderer.
----@param subject The subject to render (e.g. SinOsc)
----@param on_done A callback that receives the path to the rendered help file as its single argument
+---@param subject string The subject to render (e.g. SinOsc)
+---@param on_done function A callback that receives the path to the rendered help file as its single argument
 --- TODO: cache. compare timestamp of help source with rendered .txt
 local function render_help_file(subject, on_done)
   local cmd = string.format('SCNvim.getHelpUri("%s")', subject)
@@ -106,7 +106,7 @@ local function render_help_file(subject, on_done)
 end
 
 --- Helper function for the default browser implementation
----@param index The item to get from the quickfix list
+---@param index number The item to get from the quickfix list
 local function open_from_quickfix(index)
   local list = vim.fn.getqflist()
   local item = list[index]
@@ -132,8 +132,8 @@ end
 
 --- Action that runs when selecting documentation for a method.
 --- The default is to present the results in the quickfix window.
----@param err nil if no error otherwise string
----@param results Table with results
+---@param err string|nil nil if no error otherwise string
+---@param results table # Table with results
 M.on_select = action.new(function(err, results)
   if err then
     print(err)
@@ -159,9 +159,9 @@ M.on_select = action.new(function(err, results)
 end)
 
 --- Find help files for a method
----@param name Method name to find.
----@param target_dir The help target dir (SCDoc.helpTargetDir)
----@return A table with method entries that is suitable for the quickfix list.
+---@param name string Method name to find.
+---@param target_dir string The help target dir (SCDoc.helpTargetDir)
+---@return table # A table with method entries that is suitable for the quickfix list.
 local function find_methods(name, target_dir)
   local path = vim.fn.expand(target_dir)
   local docmap = M.get_docmap(_path.concat(path, 'docmap.json'))
@@ -185,8 +185,8 @@ end
 ---@section functions
 
 --- Get a table with a documentation overview
----@param target_dir The target help directory (SCDoc.helpTargetDir)
----@return A JSON formatted string
+---@param target_dir string The target help directory (SCDoc.helpTargetDir)
+---@return table # A JSON formatted string
 function M.get_docmap(target_dir)
   if M.docmap then
     return M.docmap
@@ -194,6 +194,7 @@ function M.get_docmap(target_dir)
   local stat = uv.fs_stat(target_dir)
   assert(stat, 'Could not find docmap.json')
   local fd = uv.fs_open(target_dir, 'r', 0)
+  assert(fd, 'Could not find docmap.json')
   local size = stat.size
   local file = uv.fs_read(fd, size, 0)
   local ok, result = pcall(vim.fn.json_decode, file)
@@ -205,7 +206,7 @@ function M.get_docmap(target_dir)
 end
 
 --- Open a help file.
----@param subject The help subject (SinOsc, tanh, etc.)
+---@param subject string The help subject (SinOsc, tanh, etc.)
 function M.open_help_for(subject)
   if not sclang.is_running() then
     M.on_open 'sclang not running'
@@ -236,9 +237,9 @@ function M.open_help_for(subject)
 end
 
 --- Render all help files.
----@param callback Run this callback on completion.
----@param include_extensions Include SCClassLibrary extensions.
----@param concurrent_jobs Number of parallel jobs (default: 8)
+---@param callback function Run this callback on completion.
+---@param include_extensions boolean Include SCClassLibrary extensions.
+---@param concurrent_jobs number Number of parallel jobs (default: 8)
 function M.render_all(callback, include_extensions, concurrent_jobs)
   include_extensions = include_extensions or true
   concurrent_jobs = concurrent_jobs or 8
@@ -292,7 +293,7 @@ function M.render_all(callback, include_extensions, concurrent_jobs)
 
       local handle = assert(uv.fs_scandir(sc_help_dir), 'Could not open SuperCollider help directory.')
       repeat
-        local filename, type = uv.fs_scandir_next(handle)
+        local filename, type = assert(uv.fs_scandir_next(handle), 'Could not read help file.')
         if type == 'file' and vim.endswith(filename, 'scnvim') then
           local basename = filename:gsub('%.html%.scnvim', '')
           local input_path = _path.concat(sc_help_dir, filename)
