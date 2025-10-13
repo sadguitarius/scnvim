@@ -145,9 +145,15 @@ SCNvim {
 
         Class.allClasses.do {arg klass;
             var className, argList, signature;
+            var currClass = klass;
             if (klass.asString.beginsWith("Meta_").not) {
+                // get methods from superclass for derived classes
+                // TODO: does this catch all the classes we need?
+                while ({currClass.class.methods.isNil}, {
+                    currClass = currClass.superclass;
+                });
                 // collect all creation methods
-                klass.class.methods.do {arg meth;
+                currClass.class.methods.do {arg meth;
                     var index, snippet;
                     var snippetName;
                     // classvars with getter/setters produces an error
