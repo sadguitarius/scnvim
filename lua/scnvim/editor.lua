@@ -116,7 +116,7 @@ local function fade_region(start, finish)
     anchor = lstart > 0 and 'NW' or 'SE',
   }
   local id = api.nvim_open_win(buf, false, options)
-  api.nvim_set_option_value('winhl', 'Normal:' .. 'SCNvimEval', {win = id})
+  api.nvim_set_option_value('winhl', 'Normal:' .. 'SCNvimEval', { win = id })
   local timer = uv.new_timer()
   local rate = 50
   local accum = 0
@@ -131,7 +131,7 @@ local function fade_region(start, finish)
         accum = duration
       end
       local value = math.pow(accum / duration, 2.5)
-      api.nvim_set_option_value('winblend', math.floor(100 * value), {win = id})
+      api.nvim_set_option_value('winblend', math.floor(100 * value), { win = id })
       if accum >= duration then
         timer:stop()
         api.nvim_win_close(id, true)
